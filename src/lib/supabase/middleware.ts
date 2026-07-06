@@ -13,10 +13,13 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value, options as Parameters<typeof request.cookies.set>[2])
+          // request.cookies.set only accepts (key, value) — no options arg
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
           )
           supabaseResponse = NextResponse.next({ request })
+          // Options (secure, sameSite, etc.) are applied on the response — the
+          // cookie the browser actually stores — which is what matters for HTTPS.
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           )
