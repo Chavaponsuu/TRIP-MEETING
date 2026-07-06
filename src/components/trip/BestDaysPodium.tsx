@@ -25,7 +25,7 @@ export function BestDaysPodium({ bestDays, totalMembers }: BestDaysPodiumProps) 
       <div className="space-y-2">
         {bestDays.slice(0, 3).map((day, index) => (
           <div
-            key={`${day.year}-${day.month}-${day.day}`}
+            key={`${day.year ?? 'x'}-${day.month ?? 'x'}-${day.day}-${index}`}
             className="flex items-center gap-3 p-3 rounded-lg bg-white border border-border"
           >
             <span className="text-2xl">{MEDALS[index]}</span>
@@ -38,9 +38,9 @@ export function BestDaysPodium({ bestDays, totalMembers }: BestDaysPodiumProps) 
               </p>
             </div>
             <div className="flex -space-x-1">
-              {day.users.slice(0, 3).map(user => (
+              {day.users.slice(0, 3).map((user, userIndex) => (
                 <div
-                  key={user.id}
+                  key={`${day.year ?? 'x'}-${day.month ?? 'x'}-${day.day}-${user.id}-${userIndex}`}
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium text-white border-2 border-white"
                   style={{ backgroundColor: user.avatar_color }}
                   title={user.name}

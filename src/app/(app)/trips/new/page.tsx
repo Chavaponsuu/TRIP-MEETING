@@ -21,17 +21,9 @@ export default function NewTripPage() {
   const [emoji, setEmoji] = useState("🗺️");
   const [description, setDescription] = useState("");
   
-  // Generate next 12 months for multi-selection
-  const currentMonth = now.getMonth(); // 0-11
   const currentYear = now.getFullYear();
-  const monthsOptions = Array.from({ length: 12 }, (_, i) => {
-    const d = new Date(currentYear, currentMonth + i, 1);
-    return {
-      month: d.getMonth() + 1,
-      year: d.getFullYear(),
-      label: `${MONTH_NAMES_TH[d.getMonth()]} ${d.getFullYear()}`
-    };
-  });
+  // Year the user is currently browsing in the picker
+  const [pickerYear, setPickerYear] = useState(currentYear);
 
   const [selectedMonths, setSelectedMonths] = useState<{ month: number; year: number }[]>([
     { month: now.getMonth() + 1, year: now.getFullYear() }
@@ -146,31 +138,93 @@ export default function NewTripPage() {
             />
           </div>
 
+          {/* ── Month picker (flight-booking style) ── */}
           <div>
             <label className="text-sm font-medium text-foreground block mb-2">
-              ช่วงเดือนที่ต้องการวางแผนทริป (เลือกได้มากกว่า 1 เดือน)
+              ช่วงเดือนที่ต้องการวางแผนทริป
+              <span className="ml-1 text-xs text-text-secondary font-normal">
+                (เลือกได้มากกว่า 1 เดือน)
+              </span>
             </label>
-            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-1 border border-border rounded-lg bg-gray-50/50">
-              {monthsOptions.map((opt) => {
-                const isSelected = selectedMonths.some(
-                  (m) => m.month === opt.month && m.year === opt.year
-                );
-                return (
-                  <button
-                    key={`${opt.year}-${opt.month}`}
-                    type="button"
-                    onClick={() => toggleMonth(opt)}
-                    className={`flex items-center justify-center py-2 px-3 text-xs font-medium rounded-lg border transition-all duration-150 ${
-                      isSelected
-                        ? "bg-primary/10 border-primary text-primary font-semibold shadow-sm"
-                        : "bg-white border-border text-text-secondary hover:border-gray-400 hover:text-foreground"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
+
+            <div className="rounded-xl border border-border overflow-hidden shadow-sm">
+              {/* Year navigator */}
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary to-indigo-500">
+                <button
+                  type="button"
+                  onClick={() => setPickerYear(y => y - 1)}
+                  disabled={pickerYear <= currentYear}
+                  className="w-8 h-8 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  ‹
+                </button>
+                <span className="text-white font-bold text-base tracking-wide">
+                  {pickerYear}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPickerYear(y => y + 1)}
+                  disabled={pickerYear >= currentYear + 2}
+                  className="w-8 h-8 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  ›
+                </button>
+              </div>
+
+              {/* Month grid — 4 cols × 3 rows */}
+              <div className="grid grid-cols-4 gap-px bg-border p-px">
+                {MONTH_NAMES_TH.map((name, idx) => {
+                  const m = idx + 1;
+                  const isPast =
+                    pickerYear === currentYear && m < now.getMonth() + 1;
+                  const isSelected = selectedMonths.some(
+                    s => s.month === m && s.year === pickerYear
+                  );
+                  return (
+                    <button
+                      key={m}
+                      type="button"
+                      disabled={isPast}
+                      onClick={() => toggleMonth({ month: m, year: pickerYear })}
+                      className={`relative flex flex-col items-center justify-center py-3 text-xs font-medium transition-all duration-150
+                        ${
+                          isSelected
+                            ? 'bg-primary text-white font-bold shadow-inner'
+                            : isPast
+                            ? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+                            : 'bg-white text-foreground hover:bg-indigo-50 hover:text-primary'
+                        }`}
+                    >
+                      {name}
+                      {isSelected && (
+                        <span className="mt-0.5 w-1 h-1 rounded-full bg-white/80" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
+
+            {/* Selected summary chips */}
+            {selectedMonths.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {selectedMonths.map(s => (
+                  <span
+                    key={`${s.year}-${s.month}`}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20"
+                  >
+                    {MONTH_NAMES_TH[s.month - 1]} {s.year}
+                    <button
+                      type="button"
+                      onClick={() => toggleMonth(s)}
+                      className="text-primary/60 hover:text-primary leading-none"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {error && <p className="text-sm text-red-500 text-center">{error}</p>}

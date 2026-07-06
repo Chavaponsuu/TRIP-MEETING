@@ -104,8 +104,13 @@ export function getBestDays(trip: Trip): DayAvailability[] {
     const key = `${avail.year}-${avail.month}-${avail.day}`
     const existing = dayMap.get(key)
     if (existing) {
-      existing.count++
-      if (avail.user) existing.users.push(avail.user)
+      // Only add the user if they're not already in the list (guards against
+      // duplicate rows caused by missing month/year migration data)
+      const alreadyAdded = avail.user && existing.users.some(u => u.id === avail.user!.id)
+      if (!alreadyAdded) {
+        existing.count++
+        if (avail.user) existing.users.push(avail.user)
+      }
     } else {
       dayMap.set(key, {
         day: avail.day,

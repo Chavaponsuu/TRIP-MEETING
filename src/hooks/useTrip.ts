@@ -20,7 +20,7 @@ export function useTrip(tripId: string) {
           user:profiles(*)
         ),
         availabilities(
-          id, trip_id, user_id, day,
+          id, trip_id, user_id, day, month, year,
           user:profiles(*)
         ),
         comments(
@@ -50,7 +50,7 @@ export function useTrip(tripId: string) {
   const refetchAvailabilities = useCallback(async () => {
     const { data } = await supabase
       .from('availabilities')
-      .select('*, user:profiles(*)')
+      .select('*, month, year, user:profiles(*)')
       .eq('trip_id', tripId)
 
     if (data) {
@@ -83,7 +83,7 @@ export function useTrip(tripId: string) {
             user:profiles(*)
           ),
           availabilities(
-            id, trip_id, user_id, day,
+            id, trip_id, user_id, day, month, year,
             user:profiles(*)
           ),
           comments(
