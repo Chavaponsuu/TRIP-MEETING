@@ -12,10 +12,11 @@ import { CalendarGrid, getBestDays } from '@/components/calendar/CalendarGrid'
 import { BestDaysPodium } from '@/components/trip/BestDaysPodium'
 import { MemberList } from '@/components/members/MemberList'
 import { InviteBox } from '@/components/trip/InviteBox'
+import { DeleteTripButton } from '@/components/trip/DeleteTripButton'
 import { CommentThread } from '@/components/trip/CommentThread'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { cn } from '@/lib/utils'
+import { cn, isTripPast, getTripMonths } from '@/lib/utils'
 import { MONTH_NAMES_TH } from '@/lib/constants'
 
 const TABS = [
@@ -58,9 +59,9 @@ export default function TripDetailPage() {
   }
 
   // Handle multiple months with backward compatibility
-  const tripMonths = trip.months && trip.months.length > 0
-    ? trip.months
-    : [{ month: trip.month, year: trip.year }]
+  const tripMonths = getTripMonths(trip)
+  const isPast = isTripPast(trip)
+  const isCreator = user?.id === trip.created_by
 
   const activeMonth = tripMonths[activeMonthIdx] || tripMonths[0]
   const bestDays = getBestDays(trip)
@@ -97,7 +98,15 @@ export default function TripDetailPage() {
       <Card>
         {activeTab === 'availability' && (
           <div className="space-y-4">
-            {!availLoading && (
+            {isPast ? (
+              <div className="text-center py-6 space-y-2">
+                <p className="text-3xl">✈️</p>
+                <p className="font-medium text-foreground">ทริปนี้จบแล้ว</p>
+                <p className="text-sm text-text-secondary">
+                  ดูผลสรุปได้ที่แท็บ &quot;วันที่ดีที่สุด&quot; และ &quot;สมาชิก&quot;
+                </p>
+              </div>
+            ) : !availLoading && (
               <>
                 {tripMonths.length > 1 && (
                   <div className="flex gap-1.5 border-b border-border pb-3 mb-2 overflow-x-auto select-none">
@@ -214,12 +223,23 @@ export default function TripDetailPage() {
                 <p className="text-sm text-text-secondary">{trip.description}</p>
               </div>
             )}
-            <InviteBox inviteCode={trip.invite_code} />
+            {!isPast && <InviteBox inviteCode={trip.invite_code} />}
+            {isPast && (
+              <p className="text-sm text-text-secondary bg-gray-50 rounded-lg px-3 py-2">
+                ทริปนี้จบแล้ว — ลิงก์ชวนเพื่อนถูกปิดใช้งาน
+              </p>
+            )}
             <CommentThread
               tripId={trip.id}
               comments={trip.comments ?? []}
               onCommentAdded={onCommentAdded}
             />
+            {isCreator && (
+              <div className="pt-4 border-t border-border">
+                <h3 className="text-sm font-medium text-foreground mb-3">จัดการทริป</h3>
+                <DeleteTripButton tripId={trip.id} tripName={trip.name} />
+              </div>
+            )}
           </div>
         )}
       </Card>

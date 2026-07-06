@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { TripCard } from '@/components/trip/TripCard'
+import { TripList } from '@/components/trip/TripList'
 import { Button } from '@/components/ui/Button'
+import { isTripPast } from '@/lib/utils'
 import { Trip } from '@/types'
 
 export default async function DashboardPage() {
@@ -37,13 +38,18 @@ export default async function DashboardPage() {
     })
   }
 
+  const activeCount = trips.filter(t => !isTripPast(t)).length
+  const historyCount = trips.filter(t => isTripPast(t)).length
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground">ทริปของฉัน</h1>
           <p className="text-sm text-text-secondary mt-0.5">
-            {trips.length > 0 ? `${trips.length} ทริป` : 'เริ่มวางแผนทริปแรกของคุณ'}
+            {trips.length > 0
+              ? `${activeCount} กำลังวางแผน · ${historyCount} ไปแล้ว`
+              : 'เริ่มวางแผนทริปแรกของคุณ'}
           </p>
         </div>
         <Link href="/trips/new">
@@ -63,15 +69,11 @@ export default async function DashboardPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
-          {trips.map(trip => (
-            <TripCard
-              key={trip.id}
-              trip={trip}
-              memberCount={memberCounts[trip.id]}
-            />
-          ))}
-        </div>
+        <TripList
+          trips={trips}
+          memberCounts={memberCounts}
+          userId={user!.id}
+        />
       )}
     </div>
   )

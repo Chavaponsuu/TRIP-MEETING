@@ -1,34 +1,57 @@
+'use client'
+
 import Link from 'next/link'
 import { Trip } from '@/types'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { MONTH_NAMES_TH } from '@/lib/constants'
+import { DeleteTripButton } from '@/components/trip/DeleteTripButton'
+import { formatTripMonthRange, isTripPast } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 interface TripCardProps {
   trip: Trip
   memberCount?: number
+  isCreator?: boolean
 }
 
-export function TripCard({ trip, memberCount }: TripCardProps) {
+export function TripCard({ trip, memberCount, isCreator }: TripCardProps) {
+  const isPast = isTripPast(trip)
+
   return (
-    <Link href={`/trips/${trip.id}`}>
-      <Card className="hover:shadow-md hover:border-primary/30 transition-all duration-150 cursor-pointer">
-        <div className="flex items-start gap-3">
-          <span className="text-3xl">{trip.emoji}</span>
+    <Card
+      className={cn(
+        'transition-all duration-150',
+        isPast ? 'opacity-80 bg-gray-50/50' : 'hover:shadow-md hover:border-primary/30'
+      )}
+    >
+      <div className="flex items-start gap-3">
+        <Link href={`/trips/${trip.id}`} className="flex items-start gap-3 flex-1 min-w-0">
+          <span className={cn('text-3xl', isPast && 'grayscale-[30%]')}>{trip.emoji}</span>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-foreground truncate">{trip.name}</h3>
             <p className="text-sm text-text-secondary truncate">{trip.destination}</p>
-            <div className="flex items-center gap-2 mt-2">
-              <Badge variant="primary">
-                {MONTH_NAMES_TH[trip.month - 1]} {trip.year}
+            <div className="flex items-center gap-2 mt-2 flex-wrap">
+              <Badge variant={isPast ? 'default' : 'primary'}>
+                {formatTripMonthRange(trip)}
               </Badge>
+              {isPast && (
+                <Badge variant="default" className="bg-emerald-100 text-emerald-700">
+                  ไปแล้ว ✓
+                </Badge>
+              )}
               {memberCount !== undefined && (
                 <Badge>{memberCount} คน</Badge>
               )}
             </div>
           </div>
-        </div>
-      </Card>
-    </Link>
+        </Link>
+
+        {isCreator && (
+          <div className="flex-shrink-0 pt-1">
+            <DeleteTripButton tripId={trip.id} tripName={trip.name} variant="text" />
+          </div>
+        )}
+      </div>
+    </Card>
   )
 }

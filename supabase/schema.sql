@@ -107,6 +107,8 @@ create policy "Authenticated users can create trips" on trips for insert
   with check (auth.uid() = created_by);
 create policy "Creator can update trip" on trips for update
   using (created_by = auth.uid());
+create policy "Creator can delete trip" on trips for delete
+  using (created_by = auth.uid());
 
 -- trip_members
 alter table trip_members enable row level security;
