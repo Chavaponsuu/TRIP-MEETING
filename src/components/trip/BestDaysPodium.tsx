@@ -1,5 +1,6 @@
 import { DayAvailability } from '@/types'
 import { formatDate } from '@/lib/utils'
+import { AVATAR_COLORS } from '@/lib/constants'
 
 interface BestDaysPodiumProps {
   bestDays: DayAvailability[]
@@ -42,7 +43,7 @@ export function BestDaysPodium({ bestDays, totalMembers }: BestDaysPodiumProps) 
                 <div
                   key={`${day.year ?? 'x'}-${day.month ?? 'x'}-${day.day}-${user.id}-${userIndex}`}
                   className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium text-white border-2 border-white"
-                  style={{ backgroundColor: user.avatar_color }}
+                  style={{ backgroundColor: user.avatar_color || AVATAR_COLORS[0] }}
                   title={user.name}
                 >
                   {user.name.charAt(0).toUpperCase()}

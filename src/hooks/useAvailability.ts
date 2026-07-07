@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/Toast'
 
@@ -8,11 +8,15 @@ export function useAvailability(tripId: string, userId: string | undefined, onSa
   const [selectedDays, setSelectedDays] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const supabase = createClient()
+
+  const supabase = useMemo(() => createClient(), [])
   const { showToast } = useToast()
 
   useEffect(() => {
-    if (!userId) return
+    if (!userId) {
+      setLoading(false)
+      return
+    }
 
     const load = async () => {
       const { data, error } = await supabase
@@ -28,7 +32,8 @@ export function useAvailability(tripId: string, userId: string | undefined, onSa
     }
 
     load()
-  }, [tripId, userId, supabase])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tripId, userId])
 
   const toggleDay = useCallback((day: number, month: number, year: number) => {
     setSelectedDays(prev => {
@@ -62,13 +67,7 @@ export function useAvailability(tripId: string, userId: string | undefined, onSa
         .insert(
           Array.from(selectedDays).map(key => {
             const [year, month, day] = key.split('-').map(Number)
-            return {
-              trip_id: tripId,
-              user_id: userId,
-              day,
-              month,
-              year,
-            }
+            return { trip_id: tripId, user_id: userId, day, month, year }
           })
         )
 
@@ -81,9 +80,7 @@ export function useAvailability(tripId: string, userId: string | undefined, onSa
 
     showToast('บันทึกวันว่างแล้ว!')
     setSaving(false)
-    if (onSave) {
-      onSave()
-    }
+    if (onSave) onSave()
   }, [tripId, userId, selectedDays, supabase, showToast, onSave])
 
   return { selectedDays, toggleDay, save, loading, saving }

@@ -2,11 +2,17 @@
 
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { useFriends } from '@/hooks/useFriends'
+import { useTripInvitations } from '@/hooks/useTripInvitations'
 import { MemberAvatar } from '@/components/members/MemberAvatar'
 import { Button } from '@/components/ui/Button'
+import { cn } from '@/lib/utils'
 
 export function AppHeader() {
-  const { profile, signOut } = useAuth()
+  const { profile, user, signOut } = useAuth()
+  const { incomingRequests } = useFriends(user?.id)
+  const { pendingCount: tripInviteCount } = useTripInvitations(user?.id)
+  const notificationCount = incomingRequests.length + tripInviteCount
 
   return (
     <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-border">
@@ -14,7 +20,23 @@ export function AppHeader() {
         <Link href="/dashboard" className="text-lg font-bold text-primary">
           TripMeet
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Link
+            href="/friends"
+            className={cn(
+              'relative p-2 rounded-lg text-text-secondary hover:text-foreground hover:bg-gray-100 transition-colors',
+            )}
+            title="เพื่อน"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            {notificationCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {notificationCount > 9 ? '9+' : notificationCount}
+              </span>
+            )}
+          </Link>
           {profile && (
             <>
               <span className="text-sm text-text-secondary hidden sm:block">{profile.name}</span>

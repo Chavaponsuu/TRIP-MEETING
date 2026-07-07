@@ -1,7 +1,7 @@
 export interface Profile {
   id: string
   name: string
-  avatar_color: string
+  avatar_color: string | null
   created_at: string
 }
 
@@ -32,7 +32,7 @@ export interface TripMember {
   trip_id: string
   user_id: string
   joined_at: string
-  user?: Profile
+  user?: Profile | null
 }
 
 export interface Availability {
@@ -42,7 +42,7 @@ export interface Availability {
   day: number
   month: number
   year: number
-  user?: Profile
+  user?: Profile | null
 }
 
 export interface Comment {
@@ -51,7 +51,7 @@ export interface Comment {
   user_id: string
   text: string
   created_at: string
-  user?: Profile
+  user?: Profile | null
 }
 
 export interface DayAvailability {
@@ -70,4 +70,26 @@ export interface TripInvitePreview {
   month: number
   year: number
   months?: TripMonth[]
+}
+
+export interface FriendRequest {
+  id: string
+  sender_id: string
+  receiver_id: string
+  status: 'pending' | 'accepted' | 'rejected'
+  created_at: string
+  sender?: Profile | null
+  receiver?: Profile | null
+}
+
+export interface TripInvitation {
+  id: string
+  trip_id: string
+  inviter_id: string
+  invitee_id: string
+  status: 'pending' | 'accepted' | 'declined'
+  created_at: string
+  inviter?: Profile | null
+  invitee?: Profile | null
+  trip?: Pick<Trip, 'id' | 'name' | 'emoji' | 'destination'>
 }

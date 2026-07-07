@@ -12,6 +12,7 @@ import { CalendarGrid, getBestDays } from '@/components/calendar/CalendarGrid'
 import { BestDaysPodium } from '@/components/trip/BestDaysPodium'
 import { MemberList } from '@/components/members/MemberList'
 import { InviteBox } from '@/components/trip/InviteBox'
+import { InviteFriendsBox } from '@/components/trip/InviteFriendsBox'
 import { DeleteTripButton } from '@/components/trip/DeleteTripButton'
 import { CommentThread } from '@/components/trip/CommentThread'
 import { Card } from '@/components/ui/Card'
@@ -223,7 +224,17 @@ export default function TripDetailPage() {
                 <p className="text-sm text-text-secondary">{trip.description}</p>
               </div>
             )}
-            {!isPast && <InviteBox inviteCode={trip.invite_code} />}
+            {!isPast && (
+              <>
+                <InviteFriendsBox
+                  tripId={trip.id}
+                  memberIds={trip.members?.map(m => m.user_id) ?? []}
+                />
+                <div className="border-t border-border pt-4">
+                  <InviteBox inviteCode={trip.invite_code} />
+                </div>
+              </>
+            )}
             {isPast && (
               <p className="text-sm text-text-secondary bg-gray-50 rounded-lg px-3 py-2">
                 ทริปนี้จบแล้ว — ลิงก์ชวนเพื่อนถูกปิดใช้งาน
