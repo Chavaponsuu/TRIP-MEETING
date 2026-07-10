@@ -30,7 +30,16 @@ export function InviteFriendsBox({ tripId, memberIds }: InviteFriendsBoxProps) {
   const handleInvite = async (friend: Profile) => {
     setInvitingId(friend.id)
     const { error } = await inviteFriend(friend.id)
-    showToast(error ? 'ไม่สามารถส่งคำเชิญได้' : `ชวน ${friend.name} แล้ว!`)
+    
+    // Log detailed error for debugging
+    if (error) {
+      console.error('Invite friend error:', error)
+    }
+    
+    showToast(
+      error ? `ไม่สามารถส่งคำเชิญได้: ${error}` : `ชวน ${friend.name} แล้ว!`,
+      error ? 'error' : 'success'
+    )
     setInvitingId(null)
   }
 
