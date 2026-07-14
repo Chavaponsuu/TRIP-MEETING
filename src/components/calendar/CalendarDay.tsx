@@ -40,11 +40,11 @@ export function CalendarDay({
       onClick={handleClick}
       disabled={mode === 'heatmap'}
       className={cn(
-        'aspect-square flex items-center justify-center text-sm rounded-lg border border-border/50',
-        'transition-all duration-150',
-        mode === 'edit' && 'cursor-pointer hover:border-primary/50',
-        mode === 'edit' && selected && 'bg-primary text-white border-primary hover:bg-primary-hover',
-        mode === 'edit' && !selected && 'bg-white hover:bg-indigo-50',
+        'aspect-square min-h-[44px] flex items-center justify-center text-base font-medium rounded-lg border-2 border-border/50',
+        'transition-all duration-150 touch-manipulation',
+        mode === 'edit' && 'cursor-pointer hover:border-primary/50 active:scale-95',
+        mode === 'edit' && selected && 'bg-primary text-white border-primary hover:bg-primary-hover shadow-sm',
+        mode === 'edit' && !selected && 'bg-white hover:bg-indigo-50 active:bg-indigo-100',
         mode === 'heatmap' && HEAT_CLASSES[heatLevel],
         mode === 'heatmap' && 'cursor-default',
       )}

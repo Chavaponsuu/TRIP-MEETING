@@ -43,17 +43,20 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-foreground">ทริปของฉัน</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl font-bold text-foreground">ทริปของฉัน</h1>
+          <p className="text-sm text-text-secondary mt-1">
             {trips.length > 0
               ? `${activeCount} กำลังวางแผน · ${historyCount} ไปแล้ว`
               : 'เริ่มวางแผนทริปแรกของคุณ'}
           </p>
         </div>
-        <Link href="/trips/new">
-          <Button size="sm">+ สร้างทริป</Button>
+        <Link href="/trips/new" className="shrink-0">
+          <Button size="md" className="whitespace-nowrap">
+            <span className="sm:hidden">+ ทริป</span>
+            <span className="hidden sm:inline">+ สร้างทริป</span>
+          </Button>
         </Link>
       </div>
 

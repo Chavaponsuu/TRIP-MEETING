@@ -69,17 +69,17 @@ export function CalendarGrid({ trip, mode, selectedDays, onToggleDay, activeMont
   })
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-foreground">
+        <h3 className="text-base font-semibold text-foreground">
           {MONTH_NAMES_TH[activeMonth - 1]} {activeYear}
         </h3>
         {mode === 'heatmap' && <HeatmapLegend />}
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-1.5">
         {DAY_NAMES_TH.map(name => (
-          <div key={name} className="text-center text-xs font-medium text-text-secondary py-1">
+          <div key={name} className="text-center text-sm font-semibold text-text-secondary py-2">
             {name}
           </div>
         ))}
@@ -88,8 +88,10 @@ export function CalendarGrid({ trip, mode, selectedDays, onToggleDay, activeMont
       </div>
 
       {mode === 'edit' && (
-        <p className="text-xs text-text-secondary text-center">
-          แตะวันที่ที่คุณว่าง {selectedDays && selectedDays.size > 0 && `(${selectedDays.size} วัน)`}
+        <p className="text-sm text-text-secondary text-center py-2 bg-indigo-50/50 rounded-lg">
+          แตะวันที่ที่คุณว่าง {selectedDays && selectedDays.size > 0 && (
+            <span className="font-medium text-primary">({selectedDays.size} วัน)</span>
+          )}
         </p>
       )}
     </div>

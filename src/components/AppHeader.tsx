@@ -15,37 +15,40 @@ export function AppHeader() {
   const notificationCount = incomingRequests.length + tripInviteCount
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-border">
-      <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/dashboard" className="text-lg font-bold text-primary">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-border shadow-sm">
+      <div className="max-w-lg mx-auto px-4 h-16 flex items-center justify-between">
+        <Link href="/dashboard" className="text-xl font-bold text-primary">
           TripMeet
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <Link
             href="/friends"
             className={cn(
-              'relative p-2 rounded-lg text-text-secondary hover:text-foreground hover:bg-gray-100 transition-colors',
+              'relative p-2.5 rounded-full text-text-secondary hover:text-foreground hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation',
             )}
             title="เพื่อน"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             {notificationCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 {notificationCount > 9 ? '9+' : notificationCount}
               </span>
             )}
           </Link>
           {profile && (
             <>
-              <span className="text-sm text-text-secondary hidden sm:block">{profile.name}</span>
-              <MemberAvatar profile={profile} size="sm" />
+              <span className="text-sm text-text-secondary hidden sm:block max-w-[100px] truncate">{profile.name}</span>
+              <button 
+                onClick={signOut}
+                className="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors touch-manipulation"
+                title="ออกจากระบบ"
+              >
+                <MemberAvatar profile={profile} size="sm" />
+              </button>
             </>
           )}
-          <Button variant="ghost" size="sm" onClick={signOut}>
-            ออก
-          </Button>
         </div>
       </div>
     </header>

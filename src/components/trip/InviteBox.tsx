@@ -27,19 +27,19 @@ export function InviteBox({ inviteCode }: InviteBoxProps) {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm font-medium text-foreground">ชวนเพื่อนเข้าร่วมทริป</p>
+      <p className="text-sm font-semibold text-foreground">ชวนเพื่อนเข้าร่วมทริป</p>
       <div className="flex gap-2">
         <input
           readOnly
           value={inviteUrl}
-          className="flex-1 px-3 py-2 text-sm rounded-lg border border-border bg-gray-50 text-text-secondary truncate"
+          className="flex-1 px-4 py-3 text-sm rounded-lg border-2 border-border bg-gray-50 text-text-secondary truncate min-h-[44px]"
         />
-        <Button variant="secondary" onClick={handleCopy}>
-          {copied ? '✓' : 'คัดลอก'}
+        <Button variant="secondary" onClick={handleCopy} className="shrink-0 min-w-[100px]">
+          {copied ? '✓ คัดลอกแล้ว' : 'คัดลอก'}
         </Button>
       </div>
-      <p className="text-xs text-text-secondary">
-        ส่งลิงก์นี้ให้เพื่อน เมื่อเปิดแล้ว login จะเข้าร่วมทริปได้ทันที
+      <p className="text-sm text-text-secondary bg-blue-50 p-3 rounded-lg">
+        💡 ส่งลิงก์นี้ให้เพื่อน เมื่อเปิดแล้ว login จะเข้าร่วมทริปได้ทันที
       </p>
     </div>
   )

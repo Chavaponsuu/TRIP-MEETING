@@ -70,25 +70,27 @@ export default function TripDetailPage() {
 
   return (
     <div className="space-y-4">
-      <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-foreground font-medium transition-colors">
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-        </svg>
-        กลับไปแดชบอร์ด
+      <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-primary font-semibold transition-colors group touch-manipulation">
+        <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+          </svg>
+        </div>
+        <span>กลับไปแดชบอร์ด</span>
       </Link>
 
       <TripHeader trip={trip} />
 
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex gap-1.5 bg-gray-100 p-1.5 rounded-xl overflow-x-auto">
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              'flex-1 py-2 text-xs font-medium rounded-md transition-all duration-150',
+              'flex-1 min-w-[80px] py-3 px-4 text-sm font-semibold rounded-lg transition-all duration-150 touch-manipulation whitespace-nowrap',
               activeTab === tab.id
-                ? 'bg-white text-primary shadow-sm'
-                : 'text-text-secondary hover:text-foreground'
+                ? 'bg-white text-primary shadow-md scale-[1.02]'
+                : 'text-text-secondary hover:text-foreground active:bg-gray-200'
             )}
           >
             {tab.label}
@@ -110,17 +112,17 @@ export default function TripDetailPage() {
             ) : !availLoading && (
               <>
                 {tripMonths.length > 1 && (
-                  <div className="flex gap-1.5 border-b border-border pb-3 mb-2 overflow-x-auto select-none">
+                  <div className="flex gap-2 border-b border-border pb-3 mb-2 overflow-x-auto select-none">
                     {tripMonths.map((m, idx) => (
                       <button
                         key={`${m.year}-${m.month}`}
                         type="button"
                         onClick={() => setActiveMonthIdx(idx)}
                         className={cn(
-                          'py-1 px-3 text-xs font-semibold rounded-full border transition-all duration-150',
+                          'py-2 px-4 text-sm font-semibold rounded-full border-2 transition-all duration-150 touch-manipulation whitespace-nowrap',
                           activeMonthIdx === idx
-                            ? 'bg-primary border-primary text-white'
-                            : 'bg-white border-border text-text-secondary hover:border-gray-400'
+                            ? 'bg-primary border-primary text-white shadow-md scale-105'
+                            : 'bg-white border-border text-text-secondary hover:border-gray-400 active:bg-gray-50'
                         )}
                       >
                         {MONTH_NAMES_TH[m.month - 1]} {m.year}

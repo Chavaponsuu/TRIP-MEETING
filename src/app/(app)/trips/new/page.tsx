@@ -93,8 +93,8 @@ export default function NewTripPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-foreground">สร้างทริปใหม่</h1>
-        <p className="text-sm text-text-secondary mt-0.5">
+        <h1 className="text-2xl font-bold text-foreground">สร้างทริปใหม่</h1>
+        <p className="text-sm text-text-secondary mt-1">
           กรอกรายละเอียดทริปของคุณ
         </p>
       </div>
@@ -124,7 +124,7 @@ export default function NewTripPage() {
           <div>
             <label
               htmlFor="description"
-              className="text-sm font-medium text-foreground"
+              className="text-sm font-medium text-foreground block mb-1.5"
             >
               รายละเอียด (ไม่บังคับ)
             </label>
@@ -134,7 +134,7 @@ export default function NewTripPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="mt-1.5 w-full px-3 py-2 text-sm rounded-lg border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-none"
+              className="w-full px-4 py-3 text-base rounded-lg border-2 border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-none touch-manipulation"
             />
           </div>
 
@@ -171,8 +171,8 @@ export default function NewTripPage() {
                 </button>
               </div>
 
-              {/* Month grid — 4 cols × 3 rows */}
-              <div className="grid grid-cols-4 gap-px bg-border p-px">
+              {/* Month grid — 3 cols on mobile, 4 cols on tablet+ */}
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-px bg-border p-px">
                 {MONTH_NAMES_TH.map((name, idx) => {
                   const m = idx + 1;
                   const isPast =
@@ -186,18 +186,18 @@ export default function NewTripPage() {
                       type="button"
                       disabled={isPast}
                       onClick={() => toggleMonth({ month: m, year: pickerYear })}
-                      className={`relative flex flex-col items-center justify-center py-3 text-xs font-medium transition-all duration-150
+                      className={`relative flex flex-col items-center justify-center py-4 text-sm font-semibold transition-all duration-150 touch-manipulation
                         ${
                           isSelected
                             ? 'bg-primary text-white font-bold shadow-inner'
                             : isPast
                             ? 'bg-gray-50 text-gray-300 cursor-not-allowed'
-                            : 'bg-white text-foreground hover:bg-indigo-50 hover:text-primary'
+                            : 'bg-white text-foreground hover:bg-indigo-50 hover:text-primary active:bg-indigo-100'
                         }`}
                     >
                       {name}
                       {isSelected && (
-                        <span className="mt-0.5 w-1 h-1 rounded-full bg-white/80" />
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-white/90" />
                       )}
                     </button>
                   );
