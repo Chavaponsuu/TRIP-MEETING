@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Trip, Comment } from '@/types'
+import { Trip, TripMember, Comment } from '@/types'
 
 export function useTrip(tripId: string) {
   const [trip, setTrip] = useState<Trip | null>(null)
@@ -11,6 +11,8 @@ export function useTrip(tripId: string) {
 
   const supabase = useMemo(() => createClient(), [])
   const channelId = useRef(`trip-${tripId}-${Math.random().toString(36).slice(2, 8)}`)
+
+  // ─── Refetch helpers ──────────────────────────────────────────────────────
 
   const refetchAvailabilities = useCallback(async () => {
     const { data } = await supabase
@@ -23,6 +25,21 @@ export function useTrip(tripId: string) {
     }
   }, [tripId, supabase])
 
+  const refetchMembers = useCallback(async () => {
+    const { data } = await supabase
+      .from('trip_members')
+      .select(`
+        id, trip_id, user_id, joined_at,
+        role, rsvp_status, rsvp_updated_at, reminder_sent_at,
+        user:profiles(*)
+      `)
+      .eq('trip_id', tripId)
+
+    if (data) {
+      setTrip(prev => prev ? { ...prev, members: data as unknown as TripMember[] } : prev)
+    }
+  }, [tripId, supabase])
+
   const appendComment = useCallback((comment: Comment) => {
     setTrip(prev => {
       if (!prev) return prev
@@ -32,13 +49,20 @@ export function useTrip(tripId: string) {
     })
   }, [])
 
+  // ─── Full trip fetch ──────────────────────────────────────────────────────
+
   const fetchTrip = useCallback(async () => {
     const { data, error: fetchError } = await supabase
       .from('trips')
       .select(`
-        *,
+        id, name, destination, emoji, description,
+        month, year, months,
+        status, date_mode, start_date, end_date,
+        budget, currency, cover_image_url,
+        created_by, invite_code, created_at,
         members:trip_members(
           id, trip_id, user_id, joined_at,
+          role, rsvp_status, rsvp_updated_at, reminder_sent_at,
           user:profiles(*)
         ),
         availabilities(
@@ -60,23 +84,30 @@ export function useTrip(tripId: string) {
     }
 
     if (data) {
-      const sortedComments = (data.comments ?? []).sort(
-        (a: Comment, b: Comment) =>
+      const rawTrip = data as any
+      const sortedComments = (rawTrip.comments ?? []).sort(
+        (a: any, b: any) =>
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       )
-      setTrip({ ...data, comments: sortedComments })
+      setTrip({ ...rawTrip, comments: sortedComments } as Trip)
     }
     setLoading(false)
   }, [tripId, supabase])
 
-  // Keep refs so realtime callbacks always use the latest versions
-  // without being listed as effect dependencies.
-  const refetchAvailabilitiesRef = useRef(refetchAvailabilities)
-  const appendCommentRef = useRef(appendComment)
-  useEffect(() => { refetchAvailabilitiesRef.current = refetchAvailabilities }, [refetchAvailabilities])
-  useEffect(() => { appendCommentRef.current = appendComment }, [appendComment])
+  // ─── Stable refs for realtime callbacks ──────────────────────────────────
 
-  // Initial load
+  const refetchAvailabilitiesRef = useRef(refetchAvailabilities)
+  const refetchMembersRef = useRef(refetchMembers)
+  const appendCommentRef = useRef(appendComment)
+  const fetchTripRef = useRef(fetchTrip)
+
+  useEffect(() => { refetchAvailabilitiesRef.current = refetchAvailabilities }, [refetchAvailabilities])
+  useEffect(() => { refetchMembersRef.current = refetchMembers }, [refetchMembers])
+  useEffect(() => { appendCommentRef.current = appendComment }, [appendComment])
+  useEffect(() => { fetchTripRef.current = fetchTrip }, [fetchTrip])
+
+  // ─── Initial load ─────────────────────────────────────────────────────────
+
   useEffect(() => {
     let cancelled = false
 
@@ -91,15 +122,30 @@ export function useTrip(tripId: string) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId])
 
-  // Realtime subscription — single channel, built once per tripId
+  // ─── Realtime subscriptions ───────────────────────────────────────────────
+
   useEffect(() => {
     const channel = supabase
       .channel(channelId.current)
+      // Trip row updated (status, dates, budget, etc.)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'trips', filter: `id=eq.${tripId}` },
+        () => fetchTripRef.current()
+      )
+      // Member role / RSVP changes
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'trip_members', filter: `trip_id=eq.${tripId}` },
+        () => refetchMembersRef.current()
+      )
+      // Availability changes
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'availabilities', filter: `trip_id=eq.${tripId}` },
         () => refetchAvailabilitiesRef.current()
       )
+      // New comments
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'comments', filter: `trip_id=eq.${tripId}` },

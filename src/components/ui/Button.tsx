@@ -14,16 +14,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 ease-in-out',
+          'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-150 ease-in-out touch-manipulation',
           'disabled:opacity-50 disabled:cursor-not-allowed',
+          'active:scale-95',
           {
-            'bg-primary text-white hover:bg-primary-hover': variant === 'primary',
-            'bg-white text-foreground border border-border hover:bg-gray-50': variant === 'secondary',
-            'bg-transparent text-foreground hover:bg-gray-100': variant === 'ghost',
-            'bg-red-500 text-white hover:bg-red-600': variant === 'danger',
-            'px-3 py-1.5 text-sm': size === 'sm',
-            'px-4 py-2 text-sm': size === 'md',
-            'px-6 py-3 text-base': size === 'lg',
+            'bg-primary text-white hover:bg-primary-hover shadow-sm': variant === 'primary',
+            'bg-white text-foreground border-2 border-border hover:bg-gray-50 active:bg-gray-100': variant === 'secondary',
+            'bg-transparent text-foreground hover:bg-gray-100 active:bg-gray-200': variant === 'ghost',
+            'bg-red-500 text-white hover:bg-red-600 shadow-sm': variant === 'danger',
+            'px-3 py-2 text-sm min-h-[36px]': size === 'sm',
+            'px-5 py-3 text-base min-h-[44px]': size === 'md',
+            'px-6 py-4 text-base min-h-[52px]': size === 'lg',
           },
           className
         )}

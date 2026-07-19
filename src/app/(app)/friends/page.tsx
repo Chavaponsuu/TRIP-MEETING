@@ -48,18 +48,18 @@ export default function FriendsPage() {
       <div>
         <Link 
           href="/dashboard" 
-          className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-primary font-medium transition-colors group mb-4"
+          className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-primary font-semibold transition-colors group mb-4 touch-manipulation"
         >
-          <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
             </svg>
           </div>
           <span>กลับไปแดชบอร์ด</span>
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-foreground">เพื่อน</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
+          <h1 className="text-2xl font-bold text-foreground">เพื่อน</h1>
+          <p className="text-sm text-text-secondary mt-1">
             {friends.length > 0
               ? `${friends.length} เพื่อน`
               : 'ค้นหาและเพิ่มเพื่อนเพื่อชวนเข้าทริปได้ง่ายขึ้น'}
@@ -93,7 +93,7 @@ export default function FriendsPage() {
       </Card>
 
       <Card>
-        <p className="text-sm font-medium text-foreground mb-3">
+        <p className="text-base font-semibold text-foreground mb-4">
           เพื่อนของฉัน ({friends.length})
         </p>
         <FriendList friends={friends} />
