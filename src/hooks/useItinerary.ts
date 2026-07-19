@@ -99,6 +99,9 @@ export function useItinerary(tripId: string) {
       return { data: null, error: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น' }
     }
 
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { data: null, error: 'กรุณาเข้าสู่ระบบก่อนสร้างกิจกรรม' }
+
     const dayItems = items.filter(item => item.day_number === input.day_number)
     const nextOrder = dayItems.length > 0 ? Math.max(...dayItems.map(i => i.display_order)) + 1 : 0
 
@@ -106,6 +109,7 @@ export function useItinerary(tripId: string) {
       .from('itinerary_items')
       .insert({
         trip_id: tripId,
+        created_by: user.id,
         day_number: input.day_number ?? null,
         item_type: input.item_type,
         title: input.title,

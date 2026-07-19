@@ -2,24 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import { Poll, PollOption, PollVote } from '@/types'
-import { usePolls } from '@/hooks/usePolls'
 import { Button } from '@/components/ui/Button'
 
 interface PollVoteCardProps {
   poll: Poll
   currentUserId: string
   onVoted: () => void
+  onVote: (input: { poll_id: string; option_id: string; rank?: number }) => Promise<{ error: string | null }>
 }
 
-export function PollVoteCard({ poll, currentUserId, onVoted }: PollVoteCardProps) {
-  const { vote, getUserVotes } = usePolls(poll.trip_id)
+export function PollVoteCard({ poll, currentUserId, onVoted, onVote }: PollVoteCardProps) {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   // Track ranked list order state locally before submission
   const [rankedOptions, setRankedOptions] = useState<PollOption[]>([])
 
-  const userVotes = getUserVotes(poll.id, currentUserId)
+  const userVotes = poll.votes?.filter(v => v.user_id === currentUserId) ?? []
   const hasVoted = userVotes.length > 0
   const isClosed = poll.status === 'closed'
   const canVote = !isClosed && (poll.allow_vote_changes || !hasVoted)
@@ -43,7 +42,7 @@ export function PollVoteCard({ poll, currentUserId, onVoted }: PollVoteCardProps
     if (!canVote) return
     setError(null)
     setSubmitting(true)
-    const { error: err } = await vote({ poll_id: poll.id, option_id: optionId })
+    const { error: err } = await onVote({ poll_id: poll.id, option_id: optionId })
     setSubmitting(false)
     if (err) setError(err)
     else onVoted()
@@ -53,7 +52,7 @@ export function PollVoteCard({ poll, currentUserId, onVoted }: PollVoteCardProps
     if (!canVote) return
     setError(null)
     setSubmitting(true)
-    const { error: err } = await vote({ poll_id: poll.id, option_id: optionId })
+    const { error: err } = await onVote({ poll_id: poll.id, option_id: optionId })
     setSubmitting(false)
     if (err) setError(err)
     else onVoted()
@@ -76,21 +75,23 @@ export function PollVoteCard({ poll, currentUserId, onVoted }: PollVoteCardProps
   const handleSubmitRanked = async () => {
     if (!canVote) return
     setError(null)
-    setSubmitting(false)
+    setSubmitting(true)
 
     // Submit ranks for all options sequentially
     for (let i = 0; i < rankedOptions.length; i++) {
       const option = rankedOptions[i]
-      const { error: err } = await vote({
+      const { error: err } = await onVote({
         poll_id: poll.id,
         option_id: option.id,
         rank: i + 1 // Rank is 1-indexed (1 = top choice)
       })
       if (err) {
         setError(err)
+        setSubmitting(false)
         return
       }
     }
+    setSubmitting(false)
     onVoted()
   }
 

@@ -5,7 +5,6 @@ import { Poll, PollOption } from '@/types'
 import { PollVoteCard } from './PollVoteCard'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { usePolls } from '@/hooks/usePolls'
 import { createClient } from '@/lib/supabase/client'
 
 interface PollCardProps {
@@ -13,16 +12,17 @@ interface PollCardProps {
   currentUserId: string
   currentUserRole: 'owner' | 'co_organizer' | 'member'
   onUpdated: () => void
+  onVote: (input: { poll_id: string; option_id: string; rank?: number }) => Promise<{ error: string | null }>
 }
 
-export function PollCard({ poll, currentUserId, currentUserRole, onUpdated }: PollCardProps) {
-  const { getUserVotes, getRankedOptions } = usePolls(poll.trip_id)
+export function PollCard({ poll, currentUserId, currentUserRole, onUpdated, onVote }: PollCardProps) {
   const [closing, setClosing] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState<string | null>(null)
   
   const supabase = createClient()
   
-  const userVotes = getUserVotes(poll.id, currentUserId)
+  const userVotes = poll.votes?.filter(v => v.user_id === currentUserId) ?? []
+  const rankedOptions = [...(poll.options ?? [])].sort((a, b) => b.vote_count - a.vote_count)
   const hasVoted = userVotes.length > 0
   const isClosed = poll.status === 'closed'
   
@@ -145,7 +145,7 @@ export function PollCard({ poll, currentUserId, currentUserRole, onUpdated }: Po
           <div className="space-y-3">
             <h4 className="text-xs font-bold text-text-secondary">ผลสรุปคะแนนโหวต (ผู้ร่วมโหวต {uniqueVoters} คน)</h4>
             <div className="space-y-2">
-              {getRankedOptions(poll.id).map((opt) => {
+              {rankedOptions.map((opt) => {
                 // Calculate percentage
                 // For ranked polls, vote_count represents total score or count. We can show raw score/count.
                 const totalOptionsVotes = poll.options?.reduce((sum, o) => sum + o.vote_count, 0) || 0
@@ -163,7 +163,7 @@ export function PollCard({ poll, currentUserId, currentUserRole, onUpdated }: Po
                     {/* Visual Bar */}
                     <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                       <div 
-                        className={`h-full rounded-full transition-all duration-300 ${
+                         className={`h-full rounded-full transition-all duration-300 ${
                           isUserChoice ? 'bg-primary' : 'bg-gray-400'
                         }`} 
                         style={{ width: `${percent}%` }}
@@ -177,13 +177,13 @@ export function PollCard({ poll, currentUserId, currentUserRole, onUpdated }: Po
             {/* If open, allow changing vote */}
             {!isClosed && poll.allow_vote_changes && (
               <div className="pt-3 border-t border-border mt-3 text-center">
-                <PollVoteCard poll={poll} currentUserId={currentUserId} onVoted={onUpdated} />
+                <PollVoteCard poll={poll} currentUserId={currentUserId} onVoted={onUpdated} onVote={onVote} />
               </div>
             )}
           </div>
         ) : (
           <div className="space-y-3">
-            <PollVoteCard poll={poll} currentUserId={currentUserId} onVoted={onUpdated} />
+            <PollVoteCard poll={poll} currentUserId={currentUserId} onVoted={onUpdated} onVote={onVote} />
             {!isClosed && poll.results_visibility === 'after_close' && (
               <p className="text-[10px] text-text-secondary text-center italic bg-slate-50 p-2 rounded-lg">
                 👁️ ผลโหวตถูกซ่อนอยู่และจะแสดงเมื่อโพลล์ปิดโหวตแล้วเท่านั้น

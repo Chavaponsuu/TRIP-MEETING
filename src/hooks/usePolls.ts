@@ -113,11 +113,17 @@ export function usePolls(tripId: string) {
       return { data: null, error: 'โพลล์ต้องมีตัวเลือกอย่างน้อย 2 ข้อ' }
     }
 
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return { data: null, error: 'กรุณาเข้าสู่ระบบก่อนสร้างโพลล์' }
+    }
+
     // 1. Insert the poll
     const { data: pollData, error: pollError } = await supabase
       .from('polls')
       .insert({
         trip_id: tripId,
+        created_by: user.id,
         title: input.title,
         description: input.description ?? null,
         poll_type: input.poll_type,
@@ -192,7 +198,6 @@ export function usePolls(tripId: string) {
       }
 
       if (existingVote) {
-        // Update existing vote to the new option
         const { error: updateError } = await supabase
           .from('poll_votes')
           .update({ option_id: input.option_id })
@@ -202,18 +207,18 @@ export function usePolls(tripId: string) {
       } else {
         const { error: insertError } = await supabase
           .from('poll_votes')
-          .insert({ poll_id: input.poll_id, option_id: input.option_id })
+          .insert({ poll_id: input.poll_id, user_id: user.id, option_id: input.option_id })
 
         if (insertError) return { error: 'โหวตไม่สำเร็จ' }
       }
 
+      await fetchPolls()
       return { error: null }
     }
 
     // ── multi_choice ──────────────────────────────────────────────────────────
     if (poll_type === 'multi_choice') {
       if (existingVoteForOption) {
-        // Toggle off — retract the vote
         if (!allow_vote_changes) return { error: 'โพลล์นี้ไม่อนุญาตให้เปลี่ยนคำตอบ' }
         const { error: deleteError } = await supabase
           .from('poll_votes')
@@ -224,11 +229,12 @@ export function usePolls(tripId: string) {
       } else {
         const { error: insertError } = await supabase
           .from('poll_votes')
-          .insert({ poll_id: input.poll_id, option_id: input.option_id })
+          .insert({ poll_id: input.poll_id, user_id: user.id, option_id: input.option_id })
 
         if (insertError) return { error: 'โหวตไม่สำเร็จ' }
       }
 
+      await fetchPolls()
       return { error: null }
     }
 
@@ -239,7 +245,6 @@ export function usePolls(tripId: string) {
       }
 
       if (existingVoteForOption) {
-        // Update the rank for this option
         const { error: updateError } = await supabase
           .from('poll_votes')
           .update({ rank: input.rank })
@@ -249,11 +254,12 @@ export function usePolls(tripId: string) {
       } else {
         const { error: insertError } = await supabase
           .from('poll_votes')
-          .insert({ poll_id: input.poll_id, option_id: input.option_id, rank: input.rank })
+          .insert({ poll_id: input.poll_id, user_id: user.id, option_id: input.option_id, rank: input.rank })
 
         if (insertError) return { error: 'โหวตไม่สำเร็จ' }
       }
 
+      await fetchPolls()
       return { error: null }
     }
 
