@@ -274,6 +274,34 @@ export function usePolls(tripId: string) {
     return { error: 'ประเภทโพลล์ไม่รองรับ' }
   }, [polls, supabase])
 
+  /**
+   * Delete a poll (only the creator or trip organizer can delete)
+   */
+  const deletePoll = useCallback(async (pollId: string): Promise<{ error: string | null }> => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return { error: 'กรุณาเข้าสู่ระบบก่อนลบโพลล์' }
+    }
+
+    const targetPoll = polls.find(p => p.id === pollId)
+    if (!targetPoll) {
+      return { error: 'ไม่พบโพลล์' }
+    }
+
+    // Delete poll (cascade will delete options and votes)
+    const { error: deleteError } = await supabase
+      .from('polls')
+      .delete()
+      .eq('id', pollId)
+
+    if (deleteError) {
+      return { error: 'ลบโพลล์ไม่สำเร็จ' }
+    }
+
+    await fetchPolls()
+    return { error: null }
+  }, [polls, supabase, fetchPolls])
+
   // ─── Helpers ─────────────────────────────────────────────────────────────────
 
   /**
@@ -300,6 +328,7 @@ export function usePolls(tripId: string) {
     refetch: fetchPolls,
     createPoll,
     vote,
+    deletePoll,
     getUserVotes,
     getRankedOptions,
   }

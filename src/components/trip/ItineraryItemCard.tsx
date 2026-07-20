@@ -63,11 +63,17 @@ export function ItineraryItemCard({
     }
   }
 
-  const formatTimeRange = () => {
-    if (!item.start_time) return null
-    if (!item.end_time) return `${item.start_time} น.`
-    return `${item.start_time} - ${item.end_time} น.`
-  }
+const formatTimeRange = () => {
+  if (!item.start_time) return null
+
+  const startTime = item.start_time.slice(0, 5)
+
+  if (!item.end_time) return `${startTime} น.`
+
+  const endTime = item.end_time.slice(0, 5)
+
+  return `${startTime} - ${endTime} น.`
+}
 
   return (
     <div 

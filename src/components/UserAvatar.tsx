@@ -4,8 +4,6 @@
  * HTTP API approach for lightweight implementation
  */
 
-import Image from 'next/image'
-
 interface UserAvatarProps {
   name: string
   size?: number
@@ -17,13 +15,12 @@ export function UserAvatar({ name, size = 40, className = '' }: UserAvatarProps)
   const src = `https://api.dicebear.com/10.x/lorelei/svg?seed=${encodeURIComponent(name)}&size=${size}`
 
   return (
-    <Image
+    <img
       src={src}
       width={size}
       height={size}
       alt={`อวตาร์ของ ${name}`}
       className={`rounded-full ${className}`}
-      unoptimized // SVG from external API doesn't need optimization
     />
   )
 }

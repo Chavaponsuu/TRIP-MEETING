@@ -33,7 +33,7 @@ export default function TripDetailPage() {
   const { selectedDays, toggleDay, save, saving } = useAvailability(tripId, user?.id, refetch)
 
   // Feature hooks
-  const { polls, vote: votePoll, refetch: refetchPolls } = usePolls(tripId)
+  const { polls, vote: votePoll, deletePoll, refetch: refetchPolls } = usePolls(tripId)
   const {
     items: itineraryItems,
     createItem,
@@ -122,44 +122,58 @@ export default function TripDetailPage() {
         <div className="lg:col-span-8 w-full space-y-4 lg:space-y-6 min-w-0">
           
           {/* SECTION 1: TRIP HEADER */}
-          <Card className="p-4 lg:p-6 w-full">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-4xl lg:text-5xl flex-shrink-0">{trip.emoji}</span>
-                  <div className="min-w-0 flex-1">
-                    <h1 className="text-xl lg:text-2xl font-bold text-foreground break-words">{trip.name}</h1>
-                    <p className="text-sm lg:text-base text-text-secondary break-words">
-                      {trip.destination.join(' → ')}
-                    </p>
+          <Card className="p-0 lg:p-0 w-full overflow-hidden">
+            {/* Cover Image */}
+            {trip.cover_image_url && (
+              <div className="relative w-full h-48 lg:h-64">
+                <img
+                  src={trip.cover_image_url}
+                  alt={trip.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            
+            {/* Trip Info */}
+            <div className="p-4 lg:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-4xl lg:text-5xl flex-shrink-0">{trip.emoji}</span>
+                    <div className="min-w-0 flex-1">
+                      <h1 className="text-xl lg:text-2xl font-bold text-foreground break-words">{trip.name}</h1>
+                      <p className="text-sm lg:text-base text-text-secondary break-words">
+                        {trip.destination.join(' → ')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant={getStatusColor()} size="sm">
+                      {getStatusLabel()}
+                    </Badge>
+                    <span className="text-sm text-text-secondary">
+                      • {goingCount} คนไปแน่นอน
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant={getStatusColor()} size="sm">
-                    {getStatusLabel()}
-                  </Badge>
-                  <span className="text-sm text-text-secondary">
-                    • {goingCount} คนไปแน่นอน
-                  </span>
-                </div>
+                {isOrganizer && (
+                  <Link href={`/trips/${tripId}/settings`} className="flex-shrink-0">
+                    <Button variant="secondary" size="sm" className="gap-1.5 whitespace-nowrap w-full sm:w-auto">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="hidden sm:inline">จัดการทริป</span>
+                      <span className="sm:hidden">จัดการ</span>
+                    </Button>
+                  </Link>
+                )}
               </div>
-              {isOrganizer && (
-                <Link href={`/trips/${tripId}/settings`} className="flex-shrink-0">
-                  <Button variant="secondary" size="sm" className="gap-1.5 whitespace-nowrap w-full sm:w-auto">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                      />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span className="hidden sm:inline">จัดการทริป</span>
-                    <span className="sm:hidden">จัดการ</span>
-                  </Button>
-                </Link>
-              )}
             </div>
           </Card>
 
@@ -281,6 +295,7 @@ export default function TripDetailPage() {
                       currentUserRole={role}
                       onUpdated={refetchPolls}
                       onVote={votePoll}
+                      onDelete={deletePoll}
                     />
                   ))}
                 </div>

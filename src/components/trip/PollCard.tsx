@@ -13,10 +13,12 @@ interface PollCardProps {
   currentUserRole: 'owner' | 'co_organizer' | 'member'
   onUpdated: () => void
   onVote: (input: { poll_id: string; option_id: string; rank?: number }) => Promise<{ error: string | null }>
+  onDelete?: (pollId: string) => Promise<{ error: string | null }>
 }
 
-export function PollCard({ poll, currentUserId, currentUserRole, onUpdated, onVote }: PollCardProps) {
+export function PollCard({ poll, currentUserId, currentUserRole, onUpdated, onVote, onDelete }: PollCardProps) {
   const [closing, setClosing] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState<string | null>(null)
   
   const supabase = createClient()
@@ -82,6 +84,20 @@ export function PollCard({ poll, currentUserId, currentUserRole, onUpdated, onVo
     }
   }
 
+  const handleDeletePoll = async () => {
+    if (!onDelete) return
+    
+    if (confirm('คุณต้องการลบโพลล์นี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
+      setDeleting(true)
+      const { error } = await onDelete(poll.id)
+      setDeleting(false)
+      
+      if (error) {
+        alert(error)
+      }
+    }
+  }
+
   // Format dates
   const formatDeadlineDate = (dStr: string) => {
     const d = new Date(dStr)
@@ -116,16 +132,31 @@ export function PollCard({ poll, currentUserId, currentUserRole, onUpdated, onVo
           )}
         </div>
 
-        {isCreatorOrOrganizer && !isClosed && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-red-500 hover:text-red-600 hover:bg-red-50"
-            loading={closing}
-            onClick={handleClosePoll}
-          >
-            🔒 ปิดโหวต
-          </Button>
+        {isCreatorOrOrganizer && (
+          <div className="flex items-center gap-2">
+            {!isClosed && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-orange-500 hover:text-orange-600 hover:bg-orange-50"
+                loading={closing}
+                onClick={handleClosePoll}
+              >
+                🔒 ปิดโหวต
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                loading={deleting}
+                onClick={handleDeletePoll}
+              >
+                🗑️ ลบ
+              </Button>
+            )}
+          </div>
         )}
       </div>
 

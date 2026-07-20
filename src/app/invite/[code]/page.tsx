@@ -46,14 +46,27 @@ export default async function InvitePage({ params }: InvitePageProps) {
         .single()
 
       if (!existing) {
+        // Add user as member with 'going' status
         await supabase.from('trip_members').insert({
           trip_id: trip.id,
           user_id: user.id,
+          rsvp_status: 'going',
+          rsvp_updated_at: new Date().toISOString(),
         })
+      } else {
+        // Update existing member to 'going' status if they were pending
+        await supabase
+          .from('trip_members')
+          .update({
+            rsvp_status: 'going',
+            rsvp_updated_at: new Date().toISOString(),
+          })
+          .eq('trip_id', trip.id)
+          .eq('user_id', user.id)
       }
     }
 
-    redirect(`/trips/${trip.id}`)
+    redirect(`/dashboard`)
   }
 
   const loginUrl = `/login?redirect=${encodeURIComponent(`/invite/${code}`)}`
