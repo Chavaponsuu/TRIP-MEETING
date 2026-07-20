@@ -57,6 +57,7 @@ export function AvailabilityHeatmap({
 
   useEffect(() => {
     fetchAvailabilities()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchAvailabilities])
 
   // Realtime subscription with debounce
@@ -250,7 +251,7 @@ export function AvailabilityHeatmap({
 
         {/* Month selector */}
         {trip.months && trip.months.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 lg:mx-0 lg:px-0">
             {trip.months.map((m) => (
               <button
                 key={`${m.year}-${m.month}`}
@@ -259,7 +260,7 @@ export function AvailabilityHeatmap({
                   setActiveYear(m.year)
                 }}
                 className={cn(
-                  'px-4 py-2 text-sm font-semibold rounded-full border-2 transition-all whitespace-nowrap',
+                  'px-3 lg:px-4 py-1.5 lg:py-2 text-xs lg:text-sm font-semibold rounded-full border-2 transition-all whitespace-nowrap flex-shrink-0',
                   activeMonth === m.month && activeYear === m.year
                     ? 'bg-primary border-primary text-white'
                     : 'bg-white border-gray-200 text-text-secondary hover:border-gray-400'
@@ -272,16 +273,16 @@ export function AvailabilityHeatmap({
         )}
 
         {/* Calendar Grid */}
-        <Card className="p-4">
-          <div className="grid grid-cols-7 gap-2 mb-2">
+        <Card className="p-3 lg:p-4">
+          <div className="grid grid-cols-7 gap-1.5 lg:gap-2 mb-2">
             {DAY_NAMES_TH.map((name) => (
-              <div key={name} className="text-center text-xs font-semibold text-text-secondary">
+              <div key={name} className="text-center text-[10px] lg:text-xs font-semibold text-text-secondary">
                 {name}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1.5 lg:gap-2">
             {/* Empty cells for first week */}
             {Array.from({ length: firstDay }).map((_, idx) => (
               <div key={`empty-${idx}`} />
@@ -304,9 +305,9 @@ export function AvailabilityHeatmap({
                   }}
                   disabled={!isSelectingDates}
                   className={cn(
-                    'aspect-square rounded-lg border-2 flex items-center justify-center text-sm font-semibold transition-all relative group',
+                    'aspect-square rounded-lg border-2 flex items-center justify-center text-[11px] lg:text-sm font-semibold transition-all relative group',
                     isSelectingDates ? 'cursor-pointer hover:scale-105' : 'cursor-default',
-                    isSelected && 'ring-2 ring-primary ring-offset-2',
+                    isSelected && 'ring-2 ring-primary ring-offset-1 lg:ring-offset-2',
                     dayData ? getHeatColor(dayData.percentage) : 'bg-white border-gray-200'
                   )}
                   title={
@@ -319,7 +320,7 @@ export function AvailabilityHeatmap({
                 >
                   <span className={cn(dayData?.isCurrentUserFree && 'font-bold')}>{day}</span>
                   {dayData && dayData.isCurrentUserFree && (
-                    <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-primary rounded-full" />
+                    <div className="absolute top-0.5 right-0.5 w-1 h-1 lg:w-1.5 lg:h-1.5 bg-primary rounded-full" />
                   )}
                 </button>
               )
@@ -327,28 +328,28 @@ export function AvailabilityHeatmap({
           </div>
 
           {/* Legend */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <p className="text-xs font-medium text-text-secondary mb-2">สัญลักษณ์:</p>
-            <div className="flex items-center gap-4 flex-wrap text-xs">
+          <div className="mt-3 lg:mt-4 pt-3 lg:pt-4 border-t border-gray-200">
+            <p className="text-[10px] lg:text-xs font-medium text-text-secondary mb-2">สัญลักษณ์:</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 lg:gap-3 text-[10px] lg:text-xs">
               <div className="flex items-center gap-1.5">
-                <div className="w-4 h-4 rounded border-2 bg-white border-gray-200" />
+                <div className="w-3 h-3 lg:w-4 lg:h-4 rounded border-2 bg-white border-gray-200 flex-shrink-0" />
                 <span className="text-text-secondary">0%</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-4 h-4 rounded border-2 bg-teal-100 border-teal-200" />
+                <div className="w-3 h-3 lg:w-4 lg:h-4 rounded border-2 bg-teal-100 border-teal-200 flex-shrink-0" />
                 <span className="text-text-secondary">1-25%</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-4 h-4 rounded border-2 bg-teal-400 border-teal-500" />
+                <div className="w-3 h-3 lg:w-4 lg:h-4 rounded border-2 bg-teal-400 border-teal-500 flex-shrink-0" />
                 <span className="text-text-secondary">51-75%</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-4 h-4 rounded border-2 bg-teal-600 border-teal-700" />
+                <div className="w-3 h-3 lg:w-4 lg:h-4 rounded border-2 bg-teal-600 border-teal-700 flex-shrink-0" />
                 <span className="text-text-secondary">76-100%</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-4 h-4 rounded border-2 bg-white border-gray-200 relative">
-                  <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-primary rounded-full" />
+                <div className="w-3 h-3 lg:w-4 lg:h-4 rounded border-2 bg-white border-gray-200 relative flex-shrink-0">
+                  <div className="absolute top-0 right-0 w-1 h-1 lg:w-1.5 lg:h-1.5 bg-primary rounded-full" />
                 </div>
                 <span className="text-text-secondary">คุณว่าง</span>
               </div>

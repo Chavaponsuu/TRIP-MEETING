@@ -81,37 +81,37 @@ export function MetricCards({ trip, goingCount, canManage, onTripUpdated }: Metr
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
         {/* วันที่ */}
-        <Card className="p-4">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <p className="text-xs font-medium text-text-secondary mb-1">วันที่</p>
+        <Card className="p-4 lg:p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-text-secondary mb-1.5">วันที่</p>
               {trip.date_mode === 'flexible' ? (
                 <div>
-                  <p className="text-sm font-bold text-amber-600">รอโหวต</p>
+                  <p className="text-sm lg:text-base font-bold text-amber-600">รอโหวต</p>
                   <a
                     href="#availability"
-                    className="text-xs text-primary hover:underline"
+                    className="text-xs lg:text-sm text-primary hover:underline"
                   >
                     ไปเลือกวันว่าง →
                   </a>
                 </div>
               ) : (
                 <div>
-                  <p className="text-sm font-bold text-foreground">
+                  <p className="text-sm lg:text-base font-bold text-foreground truncate">
                     {trip.start_date && formatDate(trip.start_date)}
                   </p>
                   {trip.end_date && trip.end_date !== trip.start_date && (
-                    <p className="text-xs text-text-secondary">
+                    <p className="text-xs text-text-secondary truncate">
                       ถึง {formatDate(trip.end_date)}
                     </p>
                   )}
                 </div>
               )}
             </div>
-            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-              <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 lg:w-6 lg:h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
@@ -119,16 +119,16 @@ export function MetricCards({ trip, goingCount, canManage, onTripUpdated }: Metr
         </Card>
 
         {/* งบประมาณ */}
-        <Card className="p-4">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <p className="text-xs font-medium text-text-secondary mb-1">งบประมาณ</p>
-              <p className="text-sm font-bold text-foreground">
+        <Card className="p-4 lg:p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-text-secondary mb-1.5">งบประมาณ</p>
+              <p className="text-sm lg:text-base font-bold text-foreground truncate">
                 {formatBudget(trip.budget, trip.currency)}
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
-              <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 lg:w-6 lg:h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -136,17 +136,17 @@ export function MetricCards({ trip, goingCount, canManage, onTripUpdated }: Metr
         </Card>
 
         {/* รหัสเชิญ */}
-        <Card className="p-4">
-          <div className="space-y-2">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="text-xs font-medium text-text-secondary mb-1">รหัสเชิญ</p>
-                <p className="text-sm font-mono font-bold text-foreground">
+        <Card className="p-4 lg:p-5 sm:col-span-2 lg:col-span-1">
+          <div className="space-y-2.5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-text-secondary mb-1.5">รหัสเชิญ</p>
+                <p className="text-sm lg:text-base font-mono font-bold text-foreground truncate">
                   {trip.invite_code}
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center">
-                <svg className="w-5 h-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 lg:w-6 lg:h-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               </div>
@@ -155,7 +155,7 @@ export function MetricCards({ trip, goingCount, canManage, onTripUpdated }: Metr
               <Button
                 variant="secondary"
                 size="sm"
-                className="flex-1 text-xs"
+                className="flex-1 text-xs lg:text-sm"
                 onClick={handleCopyInviteCode}
                 loading={copying}
               >
@@ -165,7 +165,7 @@ export function MetricCards({ trip, goingCount, canManage, onTripUpdated }: Metr
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs"
+                  className="text-xs lg:text-sm whitespace-nowrap"
                   onClick={handleRegenerateInviteCode}
                   loading={regenerating}
                 >

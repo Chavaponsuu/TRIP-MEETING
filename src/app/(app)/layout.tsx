@@ -15,7 +15,7 @@ export default async function AppLayout({
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <AppHeader />
-      <main className="flex-1 max-w-lg mx-auto w-full px-4 py-6 pb-8">
+      <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-7xl">
         {children}
       </main>
     </div>

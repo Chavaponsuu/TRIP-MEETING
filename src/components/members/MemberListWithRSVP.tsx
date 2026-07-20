@@ -148,30 +148,31 @@ export function MemberListWithRSVP({
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base font-bold text-foreground">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h3 className="text-base lg:text-lg font-bold text-foreground">
             สมาชิก ({members.length} คน)
           </h3>
           <Button
             variant="secondary"
             size="sm"
             onClick={() => setShowInviteModal(true)}
+            className="self-start sm:self-auto"
           >
-            <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             เชิญเพื่อน
           </Button>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 max-h-[600px] lg:max-h-[800px] overflow-y-auto pr-1">
           {members.map((member) => {
             const isOwner = member.role === 'owner'
             const isCurrentUser = member.user_id === currentUserId
             const canKick = canManageMembers && !isOwner && !isCurrentUser
 
             return (
-              <Card key={member.id} className="p-3">
+              <Card key={member.id} className="p-3 lg:p-4 hover:shadow-md transition-shadow">
                 <div className="flex items-center gap-3">
                   <MemberAvatar
                     profile={member.user || null}
@@ -179,10 +180,10 @@ export function MemberListWithRSVP({
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-sm text-foreground truncate">
+                      <p className="font-semibold text-sm lg:text-base text-foreground truncate">
                         {member.user?.name || 'Unknown'}
                         {isCurrentUser && (
-                          <span className="text-text-secondary ml-1">(คุณ)</span>
+                          <span className="text-text-secondary ml-1 text-xs">(คุณ)</span>
                         )}
                       </p>
                       {getRoleLabel(member.role) && (
@@ -191,7 +192,7 @@ export function MemberListWithRSVP({
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <Badge variant={getRSVPBadgeVariant(member.rsvp_status)} size="sm">
                         {getRSVPLabel(member.rsvp_status)}
                       </Badge>
@@ -209,7 +210,7 @@ export function MemberListWithRSVP({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-red-600 hover:bg-red-50"
+                      className="text-red-600 hover:bg-red-50 flex-shrink-0"
                       onClick={() => handleKickMember(member.id, member.user?.name || 'Unknown')}
                       loading={removingMemberId === member.id}
                     >
@@ -228,12 +229,12 @@ export function MemberListWithRSVP({
       {/* Invite Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="max-w-md w-full p-6">
+          <Card className="max-w-md w-full p-5 lg:p-6 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-foreground">เชิญเพื่อนเข้าร่วมทริป</h3>
+              <h3 className="text-lg lg:text-xl font-bold text-foreground">เชิญเพื่อนเข้าร่วมทริป</h3>
               <button
                 onClick={() => setShowInviteModal(false)}
-                className="text-text-secondary hover:text-foreground"
+                className="text-text-secondary hover:text-foreground transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -245,7 +246,7 @@ export function MemberListWithRSVP({
               <div>
                 <p className="text-sm text-text-secondary mb-2">รหัสเชิญ</p>
                 <div className="flex items-center gap-2 p-3 bg-gray-100 rounded-lg">
-                  <code className="flex-1 font-mono text-sm font-bold text-foreground">
+                  <code className="flex-1 font-mono text-sm lg:text-base font-bold text-foreground">
                     {trip.invite_code}
                   </code>
                 </div>
@@ -254,7 +255,7 @@ export function MemberListWithRSVP({
               <div>
                 <p className="text-sm text-text-secondary mb-2">ลิงก์เชิญ</p>
                 <div className="flex items-center gap-2 p-3 bg-gray-100 rounded-lg">
-                  <p className="flex-1 text-xs text-foreground truncate">
+                  <p className="flex-1 text-xs lg:text-sm text-foreground truncate">
                     {window.location.origin}/invite/{trip.invite_code}
                   </p>
                 </div>

@@ -12,6 +12,12 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: 'TripMeet — นัดเพื่อนไปเที่ยว',
   description: 'สร้างทริป เลือกวันว่าง หาวันที่ดีที่สุดไปด้วยกัน',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
 }
 
 export default function RootLayout({
