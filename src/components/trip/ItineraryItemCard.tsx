@@ -133,10 +133,10 @@ const formatTimeRange = () => {
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="p-1 text-red-500 hover:bg-red-50 rounded text-xs transition-colors"
+              className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors text-[10px] font-semibold"
               title="ลบกิจกรรม"
             >
-              🗑️
+              ลบ
             </button>
           )}
         </div>

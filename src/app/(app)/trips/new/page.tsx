@@ -188,7 +188,7 @@ export default function NewTripPage() {
               onClick={handleAddDestination}
               className="text-xs font-bold text-primary hover:text-primary-hover flex items-center gap-1 mt-1"
             >
-              ＋ เพิ่มจุดหมาย
+              เพิ่มจุดหมาย
             </button>
           </div>
 

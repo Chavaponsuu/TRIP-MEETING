@@ -261,7 +261,7 @@ export default function TripDetailPage() {
                     onClick={() => setIsPollCreatorOpen(true)}
                     className="self-start sm:self-auto whitespace-nowrap"
                   >
-                    ＋ สร้างโพลล์
+                    สร้างโพลล์
                   </Button>
                 )}
               </div>
@@ -314,7 +314,7 @@ export default function TripDetailPage() {
                   onClick={() => setIsItineraryFormOpen(true)}
                   className="self-start sm:self-auto whitespace-nowrap"
                 >
-                  ＋ เพิ่มกิจกรรม
+                  เพิ่มกิจกรรม
                 </Button>
               </div>
 

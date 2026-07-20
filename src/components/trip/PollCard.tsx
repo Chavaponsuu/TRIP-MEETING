@@ -142,7 +142,7 @@ export function PollCard({ poll, currentUserId, currentUserRole, onUpdated, onVo
                 loading={closing}
                 onClick={handleClosePoll}
               >
-                🔒 ปิดโหวต
+                ปิดโหวต
               </Button>
             )}
             {onDelete && (
@@ -153,7 +153,7 @@ export function PollCard({ poll, currentUserId, currentUserRole, onUpdated, onVo
                 loading={deleting}
                 onClick={handleDeletePoll}
               >
-                🗑️ ลบ
+                ลบ
               </Button>
             )}
           </div>

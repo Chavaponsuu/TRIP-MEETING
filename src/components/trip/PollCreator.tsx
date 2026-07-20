@@ -159,7 +159,7 @@ export function PollCreator({ tripId, onCreated, onCancel }: PollCreatorProps) {
           onClick={handleAddOption}
           className="text-xs font-bold text-primary hover:text-primary-hover flex items-center gap-1 mt-1"
         >
-          ＋ เพิ่มตัวเลือก
+          เพิ่มตัวเลือก
         </button>
       </div>
 
