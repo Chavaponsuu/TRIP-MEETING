@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { useFriends } from '@/hooks/useFriends'
 import { useTripInvitations } from '@/hooks/useTripInvitations'
-import { MemberAvatar } from '@/components/members/MemberAvatar'
+import { UserAvatar } from '@/components/UserAvatar'
 import { cn } from '@/lib/utils'
 
 export function AppHeader() {
@@ -64,7 +64,7 @@ export function AppHeader() {
                 <span className="text-sm text-text-secondary hidden sm:block max-w-[100px] truncate">
                   {profile.name}
                 </span>
-                <MemberAvatar profile={profile} size="sm" />
+                <UserAvatar name={profile.name} size={24} />
               </button>
 
               {/* Dropdown Menu */}
@@ -73,7 +73,7 @@ export function AppHeader() {
                   {/* Profile Info */}
                   <div className="px-4 py-3 border-b border-border">
                     <div className="flex items-center gap-3">
-                      <MemberAvatar profile={profile} size="md" />
+                      <UserAvatar name={profile.name} size={40} />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{profile.name}</p>
                         <p className="text-xs text-text-secondary truncate">{user?.email}</p>
