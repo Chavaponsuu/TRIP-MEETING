@@ -49,7 +49,7 @@ export default function TripDetailPage() {
   const { onCommentAdded } = useComments(appendComment)
 
   // New features hooks
-  const { polls, refetch: refetchPolls } = usePolls(tripId)
+  const { polls, vote: votePoll, refetch: refetchPolls } = usePolls(tripId)
   const {
     items: itineraryItems,
     createItem,
@@ -276,6 +276,7 @@ export default function TripDetailPage() {
                     currentUserId={user?.id || ''}
                     currentUserRole={userRole}
                     onUpdated={refetchPolls}
+                    onVote={votePoll}
                   />
                 ))}
               </div>
