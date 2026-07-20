@@ -3,6 +3,7 @@ export interface Profile {
   name: string
   avatar_color: string | null
   created_at: string
+  onboarded_at?: string | null
 }
 
 export interface TripMonth {

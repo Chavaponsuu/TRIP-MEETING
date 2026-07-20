@@ -12,6 +12,18 @@ export default async function AppLayout({
 
   if (!user) redirect('/login')
 
+  // Check if user has completed onboarding
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('onboarded_at')
+    .eq('id', user.id)
+    .single()
+
+  // Redirect to onboarding if not completed
+  if (profile && !profile.onboarded_at) {
+    redirect('/onboarding')
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <AppHeader />

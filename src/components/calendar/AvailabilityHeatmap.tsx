@@ -57,7 +57,7 @@ export function AvailabilityHeatmap({
 
   useEffect(() => {
     fetchAvailabilities()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [fetchAvailabilities])
 
   // Realtime subscription with debounce
