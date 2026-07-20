@@ -198,12 +198,19 @@ export function usePolls(tripId: string) {
       }
 
       if (existingVote) {
-        const { error: updateError } = await supabase
+        // Delete old vote first, then insert new one
+        const { error: deleteError } = await supabase
           .from('poll_votes')
-          .update({ option_id: input.option_id })
+          .delete()
           .eq('id', existingVote.id)
 
-        if (updateError) return { error: 'โหวตไม่สำเร็จ' }
+        if (deleteError) return { error: 'โหวตไม่สำเร็จ' }
+
+        const { error: insertError } = await supabase
+          .from('poll_votes')
+          .insert({ poll_id: input.poll_id, user_id: user.id, option_id: input.option_id })
+
+        if (insertError) return { error: 'โหวตไม่สำเร็จ' }
       } else {
         const { error: insertError } = await supabase
           .from('poll_votes')
@@ -245,9 +252,10 @@ export function usePolls(tripId: string) {
       }
 
       if (existingVoteForOption) {
+        // For ranked polls, we can update the rank directly since the constraint is on (poll_id, user_id, option_id)
         const { error: updateError } = await supabase
           .from('poll_votes')
-          .update({ rank: input.rank })
+          .update({ rank: input.rank, updated_at: new Date().toISOString() })
           .eq('id', existingVoteForOption.id)
 
         if (updateError) return { error: 'อัปเดตอันดับไม่สำเร็จ' }
